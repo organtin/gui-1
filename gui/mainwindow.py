@@ -130,20 +130,31 @@ class MainWindow(QtWidgets.QMainWindow):
         self._data_h.stop_io()
 
     def start_button_pressed(self, button):
-        self.button_startman.setDisabled(True)
+        print('Disabling buttons...')
+        print('Current status : {} {}'.format(self.button_startman.isEnabled(),
+                                              self.button_startauto.isEnabled()))
+        self.button_startman.setEnabled(False)
         self.button_startauto.setEnabled(False)
-        self.button_startman.repaint()
-        self.button_startauto.repaint()
+        print('Current status : {} {}'.format(self.button_startman.isEnabled(),
+                                              self.button_startauto.isEnabled()))
+        print('...Done')
         text = button.text()
+        print('Toggling {}...'.format(text))
         text = text.replace('Start', 'Stop')
         button.setText(text)
+        button.setStyleSheet("color: #fc6203")
+        self.button_startman.repaint()
+        self.button_startauto.repaint()
+        print('Current status : {} {}'.format(self.button_startman.isEnabled(),
+                                              self.button_startauto.isEnabled()))
 
     def stop_button_pressed(self, button):
         button.setDown(False)
         currentMode = button.text().split(' ')[1].upper()
+        print('Releasing button {}...'.format(currentMode))
         confirmation = QtWidgets.QMessageBox.warning(
             self, 
-            '**STOPPING AUTOMATIC MODE**', 
+            "**STOPPING " + currentMode + " MODE**", 
             "Are you sure you want to STOP " + currentMode + " MODE?", 
             QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel, 
             QtWidgets.QMessageBox.Cancel)
@@ -153,10 +164,15 @@ class MainWindow(QtWidgets.QMainWindow):
             text = button.text()
             text = text.replace('Stop', 'Start')
             button.setText(text)
+            button.setStyleSheet("color: rgb(0, 0, 0)")
+            print('Re-enabling both buttons...')
             self.button_startauto.setEnabled(True)
             self.button_startman.setEnabled(True)
+            print('...done')
             self.button_startman.repaint()
             self.button_startauto.repaint()
+            print('Current status : {} {}'.format(self.button_startman.isEnabled(),
+                                                  self.button_startauto.isEnabled()))
 
     def button_timeout(self):
         print('Setting timeout')
@@ -181,7 +197,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.start_button_pressed(self.button_startauto)
 
             QtCore.QTimer.singleShot(self.button_timeout(), lambda: ( 
-                     self.button_startauto.setDisabled(False)))
+                     self.button_startauto.setEnabled(True)))
+            print('Current status : {} {}'.format(self.button_startman.isEnabled(),
+                                                  self.button_startauto.isEnabled()))
 
         else:
             self.stop_button_pressed(self.button_startauto)
@@ -197,7 +215,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.start_button_pressed(self.button_startman)
             
             QtCore.QTimer.singleShot(self.button_timeout(), lambda: ( 
-                    self.button_startman.setDisabled(False)))
+                    self.button_startman.setEnabled(True)))
+            print('Current status : {} {}'.format(self.button_startman.isEnabled(),
+                                                  self.button_startauto.isEnabled()))
 
         else:
             self.stop_button_pressed(self.button_startman)
